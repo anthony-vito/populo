@@ -1,0 +1,36 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <title>Populo Home</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" media="all"
+          href="../../css/populo.css" th:href="@{/css/populo.css}" />
+</head>
+
+<body>
+
+<h2>Populo Is The Best!!</h2>
+
+<p shiro:notAuthenticated="">
+    You are not authenticated: <a href="login.html" th:href="@{/login}">Login</a>
+</p>
+<p shiro:authenticated="">
+    You are authenticated as user: <span shiro:principal=""/>
+</p>
+
+<p shiro:hasRole="ADMIN">Welcome Administrator</p>
+<p shiro:hasRole="USER">Welcome User</p>
+
+<shiro:authenticated>
+<form method="POST" action="#" th:action="@{/logout}">
+    <input type="submit" name="logout" class="login login-submit" value="Logout"/>
+</form>
+</shiro:authenticated>
+
+</body>
+
+</html>

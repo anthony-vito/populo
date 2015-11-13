@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>jbr.amv</groupId>
+  <artifactId>populo</artifactId>
+  <version>0.1-SNAPSHOT</version>
+  <packaging>war</packaging>
+  <name>Populo Neighborhood Association App</name>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <jetty.version>9.2.10.v20150310</jetty.version>
+    <slf4j.version>1.7.10</slf4j.version>
+    <logback.version>1.1.2</logback.version>
+  </properties>
+
+  <scm>
+    <connection>scm:git:ssh://git@github.com:anthony-vito/populo.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com:anthony-vito/populo.git</developerConnection>
+    <url>https://github.com/anthony-vito/populo.git</url>
+  </scm>
+
+  <dependencies>
+
+    <!-- Container Provided -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>3.1.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- End Container Provided -->
+
+    <!-- For H2 Database -->
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>1.4.187</version>
+    </dependency>
+
+    <!-- Database Connection Pooling Java 1.7 and Up -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-dbcp2</artifactId>
+      <version>2.1</version>
+    </dependency>
+
+    <!-- Shrio Login and Security-->
+    <dependency>
+      <groupId>org.apache.shiro</groupId>
+      <artifactId>shiro-core</artifactId>
+      <version>1.2.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.shiro</groupId>
+      <artifactId>shiro-web</artifactId>
+      <version>1.2.4</version>
+    </dependency>
+
+    <!-- Thymeleaf Templating Engine -->
+    <dependency>
+      <groupId>org.thymeleaf</groupId>
+      <artifactId>thymeleaf</artifactId>
+      <version>2.1.4.RELEASE</version>
+    </dependency>
+
+    <!-- Thymeleaf Extras for Shiro -->
+    <dependency>
+      <groupId>com.github.theborakompanioni</groupId>
+      <artifactId>thymeleaf-extras-shiro</artifactId>
+      <version>1.2.1</version>
+    </dependency>
+
+    <!-- Sending EMail is Fun -->
+    <dependency>
+      <groupId>javax.mail</groupId>
+      <artifactId>mail</artifactId>
+      <version>1.4.7</version>
+    </dependency>
+
+    <!-- Useful -->
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.4</version>
+    </dependency>
+
+    <!-- JSON is always a good time too -->
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.2.4</version>
+    </dependency>
+
+    <!-- BEGIN: Horrible Modern Logging Mess -->
+
+    <!-- LogBack With Bridges for Other Loggers -->
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-core</artifactId>
+      <version>${logback.version}</version>
+    </dependency>
+
+    <!-- Bridge 3rd Party Library Calls from Log4J -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>log4j-over-slf4j</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+
+    <!-- Bridge commons.logging to slf4j. -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+
+    <!--
+      Explicitly declare as provided dependency so
+      it doesn't go into the webapps.
+    -->
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.2</version>
+      <!-- Mark provided to globally exclude. -->
+      <scope>provided</scope>
+    </dependency>
+    <!-- END: Horrible Modern Logging Mess -->
+
+  </dependencies>
+
+  <profiles>
+    <profile>
+      <id>local</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <profile-id>local</profile-id>
+        <profile-suffix/>
+      </properties>
+    </profile>
+    <profile>
+      <id>prod</id>
+      <properties>
+        <profile-id>prod</profile-id>
+        <profile-suffix>-prod</profile-suffix>
+      </properties>
+    </profile>
+  </profiles>
+
+  <build>
+    <finalName>populo${profile-suffix}</finalName>
+    <plugins>
+
+      <plugin>
+        <groupId>external.atlassian.jgitflow</groupId>
+        <artifactId>jgitflow-maven-plugin</artifactId>
+        <version>1.0-m4.3</version>
+        <configuration>
+          <scmCommentPrefix>GitFlow:</scmCommentPrefix>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.6</version>
+        <executions>
+          <execution>
+            <id>build-resources</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <includeEmptyDirs>true</includeEmptyDirs>
+              <outputDirectory>target/classes</outputDirectory>
+              <filters>
+                <filter>src/main/config/${profile-id}.properties</filter>
+              </filters>
+              <resources>
+
+                <!-- Uses src/main/resources for local profile -->
+                <!-- Update FIRST TWO resource tags for new filtered files. -->
+                <resource>
+                  <directory>src/main/resources${profile-suffix}</directory>
+                  <filtering>true</filtering>
+                  <includes>
+                    <include>shiro.ini</include>
+                    <include>app.properties</include>
+                  </includes>
+                </resource>
+                <!--
+                     Run the "standard" resources with specific filtering
+                                This allows us to use a single file in the standard
+                                directory and filter it differently for all builds.
+                                ( Duplicates above for local profile. This is fine )
+                -->
+                <resource>
+                  <directory>src/main/resources</directory>
+                  <filtering>true</filtering>
+                  <includes>
+                    <include>shiro.ini</include>
+                    <include>app.properties</include>
+                  </includes>
+                </resource>
+
+                <!-- Copies all unfiltered build specific resources -->
+                <resource>
+                  <directory>src/main/resources${profile-suffix}</directory>
+                  <filtering>false</filtering>
+                </resource>
+
+                <!-- Copies all unfiltered standard resources -->
+                <resource>
+                  <directory>src/main/resources</directory>
+                  <filtering>false</filtering>
+                </resource>
+
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.3.2</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
+          <filters>
+            <filter>src/main/config/${profile-id}.properties</filter>
+          </filters>
+          <packagingExcludes>WEB-INF/lib/commons-logging-*.jar,%regex[WEB-INF/lib/log4j-(?!over-slf4j).*.jar]
+          </packagingExcludes>
+          <webResources>
+            <!-- Uses src/main/webapp for local profile -->
+            <!-- Update FIRST TWO resource tags for new filtered files. -->
+            <resource>
+              <directory>src/main/webapp${profile-suffix}</directory>
+              <filtering>true</filtering>
+              <includes>
+                <include>META-INF/*.xml</include>
+              </includes>
+            </resource>
+            <!-- Run the "standard" resources with specific filtering
+                 This allows us to use a single file in the standard
+                 directory and filter it differently for all builds.
+                 ( Duplicates above for local profile. This is fine )
+            -->
+            <resource>
+              <directory>src/main/webapp</directory>
+              <filtering>true</filtering>
+              <includes>
+                <include>META-INF/*.xml</include>
+              </includes>
+            </resource>
+
+            <!-- Copies all unfiltered build specific resources -->
+            <resource>
+              <directory>src/main/webapp${profile-suffix}</directory>
+              <filtering>false</filtering>
+            </resource>
+
+            <!-- Copies all unfiltered standard resources -->
+            <resource>
+              <directory>src/main/webapp</directory>
+              <filtering>false</filtering>
+            </resource>
+
+          </webResources>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>${jetty.version}</version>
+        <configuration>
+          <scanIntervalSeconds>5</scanIntervalSeconds>
+          <scanTargets>
+            <scanTarget>src/main/webapp/WEB-INF/templates/</scanTarget>
+          </scanTargets>
+          <webApp>
+            <contextPath>/${project.build.finalName}</contextPath>
+          </webApp>
+          <stopKey>stop</stopKey>
+          <stopPort>9999</stopPort>
+        </configuration>
+      </plugin>
+
+    </plugins>
+
+  </build>
+
+</project>

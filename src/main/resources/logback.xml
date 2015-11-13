@@ -1,0 +1,25 @@
+<configuration>
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%-4relative [%thread] %-5level %logger{35} - %msg %n</pattern>
+    </encoder>
+  </appender>
+
+  <root level="INFO">
+    <appender-ref ref="STDOUT"/>
+  </root>
+
+  <!-- Thymeleaf Logging... Show As Needed -->
+  <logger name="org.thymeleaf" level="DEBUG"/>
+  <logger name="org.thymeleaf.TemplateEngine.CONFIG" level="INFO"/>
+  <logger name="org.thymeleaf.TemplateEngine.TIMER" level="INFO"/>
+  <logger name="org.thymeleaf.TemplateEngine.cache.TEMPLATE_CACHE" level="INFO"/>
+
+  <!-- Shiro Logging... Show As Needed -->
+  <logger name="org.apache.shiro" level="DEBUG"/>
+
+  <!-- Our Local Package Logging... In DEBUG -->
+  <logger name="populo" level="DEBUG"/>
+
+</configuration>
